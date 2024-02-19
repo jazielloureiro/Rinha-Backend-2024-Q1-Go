@@ -14,7 +14,7 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 func main() {
 	http.HandleFunc("GET /clientes/{id}/extrato", handleStatements)
 
-	addr := fmt.Sprintf(":%v", os.Getenv("PORT"))
+	addr := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 
 	http.ListenAndServe(addr, nil)
 }
