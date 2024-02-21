@@ -6,7 +6,11 @@ import (
 )
 
 func Get(id int) (acc entity.Account, err error) {
-	db := persistence.GetConnection()
+	db, err := persistence.GetConnection()
+
+	if err != nil {
+		return
+	}
 
 	row := db.QueryRow(`SELECT "Id", "Limit", "Value" FROM "Account" WHERE "Id" = $1`, id)
 

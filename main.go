@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -24,7 +25,12 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	persistence.GetConnection()
+	err := persistence.Connect()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.HandleFunc("GET /clientes/{id}/extrato", handleStatements)
 
 	addr := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))

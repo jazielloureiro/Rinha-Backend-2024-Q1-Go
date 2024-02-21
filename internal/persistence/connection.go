@@ -6,16 +6,15 @@ import (
 	"os"
 	"sync"
 
-	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper"
 	_ "github.com/lib/pq"
 )
 
 var mutex = sync.Mutex{}
 var db *sql.DB
 
-func GetConnection() *sql.DB {
-	if db != nil {
-		return db
+func GetConnection() (*sql.DB, error) {
+	if db == nil {
+		return db, nil
 	}
 
 	mutex.Lock()
@@ -23,9 +22,15 @@ func GetConnection() *sql.DB {
 	defer mutex.Unlock()
 
 	if db != nil {
-		return db
+		return db, nil
 	}
 
+	err := Connect()
+
+	return db, err
+}
+
+func Connect() error {
 	connectionString := fmt.Sprintf(
 		"host=%v port=%v user=%v password=%v dbname=%v sslmode=disable",
 		os.Getenv("POSTGRES_HOST"),
@@ -36,12 +41,18 @@ func GetConnection() *sql.DB {
 	)
 
 	newConnection, err := sql.Open("postgres", connectionString)
-	helper.CheckFatalError(err)
+
+	if err != nil {
+		return err
+	}
 
 	db = newConnection
 
 	err = db.Ping()
-	helper.CheckFatalError(err)
 
-	return db
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
