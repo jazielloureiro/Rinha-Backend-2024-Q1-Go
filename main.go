@@ -8,8 +8,10 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence/account"
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence/statement"
 	_ "github.com/lib/pq"
 )
 
@@ -24,6 +26,19 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(rw, string(res))
 }
 
+func addStatement(rw http.ResponseWriter, req *http.Request) {
+	stt := entity.Statement{
+		Value:       10,
+		Type:        "c",
+		Description: "test",
+	}
+
+	statement.Save(stt)
+
+	rw.WriteHeader(http.StatusOK)
+	fmt.Fprint(rw, "ok")
+}
+
 func main() {
 	err := persistence.Connect()
 
@@ -32,6 +47,7 @@ func main() {
 	}
 
 	http.HandleFunc("GET /clientes/{id}/extrato", handleStatements)
+	http.HandleFunc("POST /clientes/{id}/transacoes", addStatement)
 
 	addr := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
 
