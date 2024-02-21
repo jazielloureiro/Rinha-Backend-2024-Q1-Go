@@ -1,9 +1,9 @@
 package entity
 
 type Statement struct {
-	Id          int
-	Value       int
-	Type        string
-	Description string
-	Date        string
+	Id          int    `json:"id"`
+	Value       int    `json:"value"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	Date        string `json:"date"`
 }

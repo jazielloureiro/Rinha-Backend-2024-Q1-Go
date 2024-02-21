@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -16,8 +17,10 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 
 	account, _ := account.Get(id)
 
+	res, _ := json.Marshal(account)
+
 	rw.WriteHeader(http.StatusOK)
-	fmt.Fprintf(rw, "Hello, %v!\n", account)
+	fmt.Fprint(rw, string(res))
 }
 
 func main() {

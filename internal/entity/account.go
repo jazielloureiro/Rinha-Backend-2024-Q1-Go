@@ -1,7 +1,7 @@
 package entity
 
 type Account struct {
-	Id    int
-	Limit int
-	Value int
+	Id    int `json:"id"`
+	Limit int `json:"limit"`
+	Value int `json:"value"`
 }
