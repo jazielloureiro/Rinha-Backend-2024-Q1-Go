@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 	_ "github.com/lib/pq"
 )
 
@@ -17,22 +17,9 @@ type Account struct {
 }
 
 func handleStatements(rw http.ResponseWriter, req *http.Request) {
-	connectionString := fmt.Sprintf("host=%v port=%v user=%v password=%v dbname=%v sslmode=disable",
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_PORT"),
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"))
+	row := persistence.GetConnection().QueryRow(`SELECT * FROM "Account" WHERE "Id" = $1`, req.PathValue("id"))
 
-	db, err := sql.Open("postgres", connectionString)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	row := db.QueryRow("SELECT * FROM \"Account\" WHERE \"Id\" = $1", req.PathValue("id"))
-
-	err = row.Err()
+	err := row.Err()
 
 	if err != nil {
 		log.Fatal(err)
@@ -46,6 +33,7 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	persistence.GetConnection()
 	http.HandleFunc("GET /clientes/{id}/extrato", handleStatements)
 
 	addr := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))
