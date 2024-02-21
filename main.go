@@ -6,15 +6,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 	_ "github.com/lib/pq"
 )
-
-type Account struct {
-	Id    int
-	Limit int
-	Value int
-}
 
 func handleStatements(rw http.ResponseWriter, req *http.Request) {
 	row := persistence.GetConnection().QueryRow(`SELECT * FROM "Account" WHERE "Id" = $1`, req.PathValue("id"))
@@ -25,7 +20,7 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	var account Account
+	var account entity.Account
 	row.Scan(&account.Id, &account.Limit, &account.Value)
 
 	rw.WriteHeader(http.StatusOK)
