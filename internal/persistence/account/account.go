@@ -24,3 +24,24 @@ func Get(id int) (acc entity.Account, err error) {
 
 	return
 }
+
+func Update(acc entity.Account) (newAcc entity.Account, err error) {
+	newAcc = acc
+	db, err := persistence.GetConnection()
+
+	if err != nil {
+		return
+	}
+
+	row := db.QueryRow(`UPDATE "Account" SET "Value" = $1 WHERE "Id" = $2 RETURNING "Value"`, acc.Value, acc.Id)
+
+	err = row.Err()
+
+	if err != nil {
+		return
+	}
+
+	row.Scan(&newAcc.Value)
+
+	return
+}
