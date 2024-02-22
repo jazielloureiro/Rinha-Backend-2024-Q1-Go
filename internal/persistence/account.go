@@ -13,13 +13,7 @@ func (acc *AccountDAO) Get() (err error) {
 
 	row := db.QueryRow(`SELECT "Limit", "Value" FROM "Account" WHERE "Id" = $1`, acc.Id)
 
-	err = row.Err()
-
-	if err != nil {
-		return
-	}
-
-	row.Scan(&acc.Limit, &acc.Value)
+	err = row.Scan(&acc.Limit, &acc.Value)
 
 	return
 }
@@ -33,13 +27,7 @@ func (acc *AccountDAO) Update() (err error) {
 
 	row := db.QueryRow(`UPDATE "Account" SET "Value" = $1 WHERE "Id" = $2 RETURNING "Value"`, acc.Value, acc.Id)
 
-	err = row.Err()
-
-	if err != nil {
-		return
-	}
-
-	row.Scan(&acc.Value)
+	err = row.Scan(&acc.Value)
 
 	return
 }

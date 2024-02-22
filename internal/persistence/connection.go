@@ -40,17 +40,13 @@ func Connect() error {
 		os.Getenv("POSTGRES_DB"),
 	)
 
-	newConnection, err := sql.Open("postgres", connectionString)
-
-	if err != nil {
+	if newConnection, err := sql.Open("postgres", connectionString); err != nil {
 		return err
+	} else {
+		db = newConnection
 	}
 
-	db = newConnection
-
-	err = db.Ping()
-
-	if err != nil {
+	if err := db.Ping(); err != nil {
 		return err
 	}
 

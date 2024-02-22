@@ -34,10 +34,19 @@ func addStatement(rw http.ResponseWriter, req *http.Request) {
 
 	account := persistence.AccountDAO{Id: id}
 
-	account.Get()
+	if err := account.Get(); err != nil {
+		rw.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(rw, err)
+		return
+	}
 
-	account.Value -= statement.Value
-	account.Update()
+	account.Value += statement.Value
+
+	if err := account.Update(); err != nil {
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		fmt.Fprint(rw, err)
+		return
+	}
 
 	statement.Save()
 
