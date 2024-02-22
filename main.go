@@ -9,14 +9,15 @@ import (
 	"strconv"
 
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
-	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence/account"
 	_ "github.com/lib/pq"
 )
 
 func handleStatements(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	account, _ := account.Get(id)
+	account := persistence.AccountDAO{Id: id}
+
+	account.Get()
 
 	res, _ := json.Marshal(account)
 
@@ -35,12 +36,14 @@ func addStatement(rw http.ResponseWriter, req *http.Request) {
 
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	acc, _ := account.Get(id)
+	account := persistence.AccountDAO{Id: id}
 
-	acc.Value = -10
-	account.Update(acc)
+	account.Get()
 
-	res, _ := json.Marshal(acc)
+	account.Value -= 10
+	account.Update()
+
+	res, _ := json.Marshal(account)
 
 	rw.WriteHeader(http.StatusOK)
 	fmt.Fprint(rw, string(res))
