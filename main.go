@@ -26,14 +26,6 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 }
 
 func addStatement(rw http.ResponseWriter, req *http.Request) {
-	statement := persistence.StatementDAO{
-		Value:       10,
-		Type:        "c",
-		Description: "test",
-	}
-
-	statement.Save()
-
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
 	account := persistence.AccountDAO{Id: id}
@@ -42,6 +34,15 @@ func addStatement(rw http.ResponseWriter, req *http.Request) {
 
 	account.Value -= 10
 	account.Update()
+
+	statement := persistence.StatementDAO{
+		AccountId:   id,
+		Value:       10,
+		Type:        "d",
+		Description: "test",
+	}
+
+	statement.Save()
 
 	res, _ := json.Marshal(account)
 

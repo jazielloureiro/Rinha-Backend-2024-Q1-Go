@@ -12,7 +12,8 @@ func (stt *StatementDAO) Save() (err error) {
 	}
 
 	_, err = db.Exec(
-		`INSERT INTO "Statement" ("Value", "Type", "Description", "Date") VALUES ($1, $2, $3, NOW())`,
+		`INSERT INTO "Statement" ("AccountId", "Value", "Type", "Description", "Date") VALUES ($1, $2, $3, $4, NOW())`,
+		stt.AccountId,
 		stt.Value,
 		stt.Type,
 		stt.Description,
