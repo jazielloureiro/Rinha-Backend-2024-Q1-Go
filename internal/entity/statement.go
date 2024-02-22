@@ -1,10 +1,10 @@
 package entity
 
 type Statement struct {
-	Id          int    `json:"id"`
-	AccountId   int    `json:"accountId"`
-	Value       int    `json:"value"`
-	Type        string `json:"type"`
-	Description string `json:"description"`
-	Date        string `json:"date"`
+	Id          int    `json:"-"`
+	AccountId   int    `json:"-"`
+	Value       int    `json:"valor"`
+	Type        string `json:"tipo"`
+	Description string `json:"descricao"`
+	Date        string `json:"realizada_em"`
 }
