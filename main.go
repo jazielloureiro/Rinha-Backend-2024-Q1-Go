@@ -8,10 +8,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence/account"
-	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence/statement"
 	_ "github.com/lib/pq"
 )
 
@@ -27,16 +25,25 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 }
 
 func addStatement(rw http.ResponseWriter, req *http.Request) {
-	stt := entity.Statement{
+	statement := persistence.StatementDAO{
 		Value:       10,
 		Type:        "c",
 		Description: "test",
 	}
 
-	statement.Save(stt)
+	statement.Save()
+
+	id, _ := strconv.Atoi(req.PathValue("id"))
+
+	acc, _ := account.Get(id)
+
+	acc.Value = -10
+	account.Update(acc)
+
+	res, _ := json.Marshal(acc)
 
 	rw.WriteHeader(http.StatusOK)
-	fmt.Fprint(rw, "ok")
+	fmt.Fprint(rw, string(res))
 }
 
 func main() {
