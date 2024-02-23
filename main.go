@@ -18,9 +18,7 @@ import (
 func getStatements(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	statement := persistence.StatementDAO{}
-
-	statements, _ := statement.GetLast10ByAccountId(id)
+	statements := service.GetStatements(id)
 
 	res, _ := json.Marshal(statements)
 

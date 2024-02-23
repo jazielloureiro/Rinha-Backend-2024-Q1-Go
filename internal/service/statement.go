@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
@@ -30,4 +32,22 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 	statementDAO.Save()
 
 	return entity.Account(account), nil
+}
+
+func GetStatements(accountId int) helper.StatementsDTO {
+	statementDAO := persistence.StatementDAO{}
+
+	statements, _ := statementDAO.GetLast10ByAccountId(accountId)
+
+	account := persistence.AccountDAO{Id: accountId}
+	account.Get()
+
+	return helper.StatementsDTO{
+		Balance: helper.BalanceDTO{
+			Date:  time.Now(),
+			Limit: account.Limit,
+			Value: account.Value,
+		},
+		Statements: statements,
+	}
 }
