@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/service"
 	_ "github.com/lib/pq"
@@ -37,8 +38,16 @@ func addStatement(rw http.ResponseWriter, req *http.Request) {
 	account, err := service.CreateStatement(statement)
 
 	if err != nil {
-		rw.WriteHeader(http.StatusUnprocessableEntity)
-		fmt.Fprint(rw, err)
+		switch err {
+		default:
+			rw.WriteHeader(http.StatusInternalServerError)
+		case helper.AccountNotFoundError:
+			rw.WriteHeader(http.StatusNotFound)
+		case helper.InsufficientBalanceError:
+			rw.WriteHeader(http.StatusUnprocessableEntity)
+		}
+
+		fmt.Fprintf(rw, "{\"error\":\"%v\"}", err)
 		return
 	}
 

@@ -1,9 +1,8 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 )
 
@@ -11,7 +10,7 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 	account := persistence.AccountDAO{Id: statement.AccountId}
 
 	if err := account.Get(); err != nil {
-		return entity.Account{}, fmt.Errorf("there's not account for the given id")
+		return entity.Account{}, helper.AccountNotFoundError
 	}
 
 	statementValue := statement.Value
@@ -23,7 +22,7 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 	account.Value += statementValue
 
 	if err := account.Update(); err != nil {
-		return entity.Account{}, fmt.Errorf("insufficient balance")
+		return entity.Account{}, helper.InsufficientBalanceError
 	}
 
 	statementDAO := persistence.StatementDAO(statement)
