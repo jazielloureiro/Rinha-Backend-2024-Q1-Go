@@ -8,7 +8,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
+	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/service"
 	_ "github.com/lib/pq"
 )
 
@@ -28,27 +30,17 @@ func handleStatements(rw http.ResponseWriter, req *http.Request) {
 func addStatement(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	statement := persistence.StatementDAO{AccountId: id}
+	statement := entity.Statement{AccountId: id}
 
 	json.NewDecoder(req.Body).Decode(&statement)
 
-	account := persistence.AccountDAO{Id: id}
+	account, err := service.CreateStatement(statement)
 
-	if err := account.Get(); err != nil {
-		rw.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(rw, err)
-		return
-	}
-
-	account.Value += statement.Value
-
-	if err := account.Update(); err != nil {
+	if err != nil {
 		rw.WriteHeader(http.StatusUnprocessableEntity)
 		fmt.Fprint(rw, err)
 		return
 	}
-
-	statement.Save()
 
 	res, _ := json.Marshal(account)
 

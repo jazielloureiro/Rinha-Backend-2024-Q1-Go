@@ -9,3 +9,5 @@ replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence 
 replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper => ./internal/helper
 
 replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity => ./internal/entity
+
+replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/service => ./internal/service
