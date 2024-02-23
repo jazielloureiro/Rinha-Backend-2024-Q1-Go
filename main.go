@@ -15,15 +15,16 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func handleStatements(rw http.ResponseWriter, req *http.Request) {
+func getStatements(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	account := persistence.AccountDAO{Id: id}
+	statement := persistence.StatementDAO{}
 
-	account.Get()
+	statements, _ := statement.GetLast10ByAccountId(id)
 
-	res, _ := json.Marshal(account)
+	res, _ := json.Marshal(statements)
 
+	rw.Header().Add("content-type", "application/json")
 	rw.WriteHeader(http.StatusOK)
 	fmt.Fprint(rw, string(res))
 }
@@ -64,7 +65,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("GET /clientes/{id}/extrato", handleStatements)
+	http.HandleFunc("GET /clientes/{id}/extrato", getStatements)
 	http.HandleFunc("POST /clientes/{id}/transacoes", addStatement)
 
 	addr := fmt.Sprintf(":%v", os.Getenv("SERVER_PORT"))

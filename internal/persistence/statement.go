@@ -21,3 +21,30 @@ func (stt *StatementDAO) Save() (err error) {
 
 	return
 }
+
+func (stt *StatementDAO) GetLast10ByAccountId(accountId int) (stts []entity.Statement, err error) {
+	db, err := GetConnection()
+
+	if err != nil {
+		return
+	}
+
+	rows, err := db.Query(
+		`SELECT "Value", "Type", "Description", "Date" FROM "Statement" WHERE "AccountId" = $1 ORDER BY "Id" DESC LIMIT 10`,
+		accountId,
+	)
+
+	if err != nil {
+		return
+	}
+
+	for i := 0; rows.Next(); i++ {
+		var s entity.Statement
+
+		rows.Scan(&s.Value, &s.Type, &s.Description, &s.Date)
+
+		stts = append(stts, s)
+	}
+
+	return
+}
