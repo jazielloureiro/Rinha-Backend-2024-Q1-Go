@@ -11,3 +11,5 @@ replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/helper => ./
 replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity => ./internal/entity
 
 replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/service => ./internal/service
+
+replace github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/controller => ./internal/controller
