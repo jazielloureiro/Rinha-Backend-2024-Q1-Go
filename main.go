@@ -20,11 +20,7 @@ func getStatements(rw http.ResponseWriter, req *http.Request) {
 
 	statements := service.GetStatements(id)
 
-	res, _ := json.Marshal(statements)
-
-	rw.Header().Add("content-type", "application/json")
-	rw.WriteHeader(http.StatusOK)
-	fmt.Fprint(rw, string(res))
+	helper.WriteResponse(rw, http.StatusOK, statements)
 }
 
 func addStatement(rw http.ResponseWriter, req *http.Request) {
@@ -37,23 +33,27 @@ func addStatement(rw http.ResponseWriter, req *http.Request) {
 	account, err := service.CreateStatement(statement)
 
 	if err != nil {
+		var statusCode int
+
 		switch err {
 		default:
-			rw.WriteHeader(http.StatusInternalServerError)
+			statusCode = http.StatusInternalServerError
 		case helper.AccountNotFoundError:
-			rw.WriteHeader(http.StatusNotFound)
+			statusCode = http.StatusNotFound
 		case helper.InsufficientBalanceError:
-			rw.WriteHeader(http.StatusUnprocessableEntity)
+			statusCode = http.StatusUnprocessableEntity
 		}
 
-		fmt.Fprintf(rw, "{\"error\":\"%v\"}", err)
+		helper.WriteResponse(
+			rw,
+			statusCode,
+			map[string]string{"error": err.Error()},
+		)
+
 		return
 	}
 
-	res, _ := json.Marshal(account)
-
-	rw.WriteHeader(http.StatusOK)
-	fmt.Fprint(rw, string(res))
+	helper.WriteResponse(rw, http.StatusOK, account)
 }
 
 func main() {
