@@ -23,7 +23,12 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 
 	statement := entity.Statement{AccountId: id}
 
-	json.NewDecoder(req.Body).Decode(&statement)
+	err := json.NewDecoder(req.Body).Decode(&statement)
+
+	if err != nil {
+		helper.WriteErrorResponse(rw, http.StatusUnprocessableEntity, err)
+		return
+	}
 
 	account, err := service.CreateStatement(statement)
 
@@ -39,12 +44,7 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 			statusCode = http.StatusUnprocessableEntity
 		}
 
-		helper.WriteResponse(
-			rw,
-			statusCode,
-			map[string]string{"error": err.Error()},
-		)
-
+		helper.WriteErrorResponse(rw, statusCode, err)
 		return
 	}
 
