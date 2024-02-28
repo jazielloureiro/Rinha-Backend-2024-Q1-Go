@@ -18,14 +18,18 @@ func (acc *AccountDAO) Get() (err error) {
 	return
 }
 
-func (acc *AccountDAO) Update() (err error) {
+func (acc *AccountDAO) Update(statementValue int) (err error) {
 	db, err := GetConnection()
 
 	if err != nil {
 		return
 	}
 
-	row := db.QueryRow(`UPDATE "Account" SET "Value" = $1 WHERE "Id" = $2 RETURNING "Value"`, acc.Value, acc.Id)
+	row := db.QueryRow(
+		`UPDATE "Account" SET "Value" = "Value" + $1 WHERE "Id" = $2 RETURNING "Value"`,
+		statementValue,
+		acc.Id,
+	)
 
 	err = row.Scan(&acc.Value)
 

@@ -21,9 +21,7 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 		statementValue = -statementValue
 	}
 
-	account.Value += statementValue
-
-	if err := account.Update(); err != nil {
+	if err := account.Update(statementValue); err != nil {
 		return entity.Account{}, helper.InsufficientBalanceError
 	}
 
