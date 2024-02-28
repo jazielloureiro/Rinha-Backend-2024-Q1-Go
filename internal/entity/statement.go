@@ -8,3 +8,7 @@ type Statement struct {
 	Description string `json:"descricao"`
 	Date        string `json:"realizada_em"`
 }
+
+func (stt Statement) Valid() bool {
+	return (stt.Type == "c" || stt.Type == "d") && stt.Description != "" && len(stt.Description) <= 10
+}

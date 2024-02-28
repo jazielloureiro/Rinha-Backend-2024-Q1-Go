@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -27,6 +28,11 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		helper.WriteErrorResponse(rw, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	if !statement.Valid() {
+		helper.WriteErrorResponse(rw, http.StatusUnprocessableEntity, fmt.Errorf("invalid statement"))
 		return
 	}
 
