@@ -34,13 +34,16 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 	return entity.Account(account), nil
 }
 
-func GetStatements(accountId int) helper.StatementsDTO {
+func GetStatements(accountId int) (helper.StatementsDTO, error) {
+	account := persistence.AccountDAO{Id: accountId}
+
+	if err := account.Get(); err != nil {
+		return helper.StatementsDTO{}, helper.AccountNotFoundError
+	}
+
 	statementDAO := persistence.StatementDAO{}
 
 	statements, _ := statementDAO.GetLast10ByAccountId(accountId)
-
-	account := persistence.AccountDAO{Id: accountId}
-	account.Get()
 
 	return helper.StatementsDTO{
 		Balance: helper.BalanceDTO{
@@ -49,5 +52,5 @@ func GetStatements(accountId int) helper.StatementsDTO {
 			Value: account.Value,
 		},
 		Statements: statements,
-	}
+	}, nil
 }

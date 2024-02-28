@@ -14,7 +14,12 @@ import (
 func GetStatements(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	statements := service.GetStatements(id)
+	statements, err := service.GetStatements(id)
+
+	if err != nil {
+		helper.WriteErrorResponse(rw, http.StatusNotFound, err)
+		return
+	}
 
 	helper.WriteResponse(rw, http.StatusOK, statements)
 }
@@ -24,9 +29,7 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 
 	statement := entity.Statement{AccountId: id}
 
-	err := json.NewDecoder(req.Body).Decode(&statement)
-
-	if err != nil {
+	if err := json.NewDecoder(req.Body).Decode(&statement); err != nil {
 		helper.WriteErrorResponse(rw, http.StatusBadRequest, err)
 		return
 	}
