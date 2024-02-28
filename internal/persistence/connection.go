@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strconv"
 	"sync"
 
 	_ "github.com/lib/pq"
@@ -48,6 +49,18 @@ func Connect() error {
 
 	if err := db.Ping(); err != nil {
 		return err
+	}
+
+	if maxOpenConns, err := strconv.Atoi(os.Getenv("DB_MAX_OPEN_CONNS")); err != nil {
+		return err
+	} else {
+		db.SetMaxOpenConns(maxOpenConns)
+	}
+
+	if maxIdleConns, err := strconv.Atoi(os.Getenv("DB_MAX_IDLE_CONNS")); err != nil {
+		return err
+	} else {
+		db.SetMaxOpenConns(maxIdleConns)
 	}
 
 	return nil
