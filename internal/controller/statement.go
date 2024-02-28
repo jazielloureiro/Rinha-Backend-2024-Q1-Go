@@ -27,7 +27,7 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(&statement)
 
 	if err != nil {
-		helper.WriteErrorResponse(rw, http.StatusUnprocessableEntity, err)
+		helper.WriteErrorResponse(rw, http.StatusBadRequest, err)
 		return
 	}
 
