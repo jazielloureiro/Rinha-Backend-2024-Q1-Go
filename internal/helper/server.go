@@ -15,3 +15,7 @@ func WriteResponse(rw http.ResponseWriter, statusCode int, response any) {
 
 	fmt.Fprint(rw, string(resJson))
 }
+
+func WriteErrorResponse(rw http.ResponseWriter, statusCode int, err error) {
+	WriteResponse(rw, statusCode, map[string]string{"error": err.Error()})
+}
