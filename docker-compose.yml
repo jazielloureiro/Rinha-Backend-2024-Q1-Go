@@ -9,7 +9,12 @@ services:
     ports:
       - 9999:9999
     restart: always
-    
+    deploy:
+      resources:
+        limits:
+          cpus: "0.22"
+          memory: "30MB"
+
   server1: &server
     hostname: server1
     build:
@@ -19,6 +24,11 @@ services:
     depends_on:
       - postgres
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "0.33"
+          memory: "50MB"
     
   server2:
     <<: *server
@@ -32,6 +42,11 @@ services:
     env_file:
       - ./.env
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "0.64"
+          memory: "420MB"
 
 volumes:
   postgres:
