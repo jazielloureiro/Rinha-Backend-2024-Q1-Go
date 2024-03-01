@@ -60,7 +60,7 @@ func Connect() error {
 	if maxIdleConns, err := strconv.Atoi(os.Getenv("DB_MAX_IDLE_CONNS")); err != nil {
 		return err
 	} else {
-		db.SetMaxOpenConns(maxIdleConns)
+		db.SetMaxIdleConns(maxIdleConns)
 	}
 
 	return nil
