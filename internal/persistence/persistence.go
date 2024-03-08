@@ -6,3 +6,8 @@ type AccountRepository interface {
 	Get(int) (entity.Account, error)
 	Update(*entity.Account, int) error
 }
+
+type StatementRepository interface {
+	Save(entity.Statement) error
+	GetLast10FromAccount(int) ([]entity.Statement, error)
+}

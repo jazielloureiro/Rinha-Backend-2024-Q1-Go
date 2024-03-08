@@ -9,7 +9,8 @@ import (
 )
 
 type StatementService struct {
-	accountRepository persistence.AccountRepository
+	accountRepository   persistence.AccountRepository
+	statementRepository persistence.StatementRepository
 }
 
 func (ss StatementService) Save(statement entity.Statement) (entity.Account, error) {
@@ -29,11 +30,9 @@ func (ss StatementService) Save(statement entity.Statement) (entity.Account, err
 		return account, helper.InsufficientBalanceError
 	}
 
-	statementDAO := persistence.StatementDAO(statement)
+	err = ss.statementRepository.Save(statement)
 
-	statementDAO.Save()
-
-	return entity.Account(account), nil
+	return entity.Account(account), err
 }
 
 func (ss StatementService) Get(accountId int) (helper.StatementsDTO, error) {
@@ -43,9 +42,7 @@ func (ss StatementService) Get(accountId int) (helper.StatementsDTO, error) {
 		return helper.StatementsDTO{}, helper.AccountNotFoundError
 	}
 
-	statementDAO := persistence.StatementDAO{}
-
-	statements, _ := statementDAO.GetLast10ByAccountId(accountId)
+	statements, err := ss.statementRepository.GetLast10FromAccount(accountId)
 
 	return helper.StatementsDTO{
 		Balance: helper.BalanceDTO{
@@ -54,11 +51,12 @@ func (ss StatementService) Get(accountId int) (helper.StatementsDTO, error) {
 			Value: account.Value,
 		},
 		Statements: statements,
-	}, nil
+	}, err
 }
 
 func NewStatementService() StatementService {
 	return StatementService{
-		accountRepository: persistence.NewAccountRepository(),
+		accountRepository:   persistence.NewAccountRepository(),
+		statementRepository: persistence.NewStatementRepository(),
 	}
 }

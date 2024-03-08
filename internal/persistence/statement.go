@@ -2,9 +2,9 @@ package persistence
 
 import "github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 
-type StatementDAO entity.Statement
+type PostgresStatementRepository struct{}
 
-func (stt *StatementDAO) Save() (err error) {
+func (psr PostgresStatementRepository) Save(stt entity.Statement) (err error) {
 	db, err := GetConnection()
 
 	if err != nil {
@@ -22,7 +22,7 @@ func (stt *StatementDAO) Save() (err error) {
 	return
 }
 
-func (stt *StatementDAO) GetLast10ByAccountId(accountId int) (stts []entity.Statement, err error) {
+func (psr PostgresStatementRepository) GetLast10FromAccount(accountId int) (stts []entity.Statement, err error) {
 	db, err := GetConnection()
 
 	if err != nil {
@@ -47,4 +47,8 @@ func (stt *StatementDAO) GetLast10ByAccountId(accountId int) (stts []entity.Stat
 	}
 
 	return
+}
+
+func NewStatementRepository() PostgresStatementRepository {
+	return PostgresStatementRepository{}
 }
