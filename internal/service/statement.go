@@ -8,11 +8,15 @@ import (
 	"github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/persistence"
 )
 
-func CreateStatement(statement entity.Statement) (entity.Account, error) {
-	account := persistence.AccountDAO{Id: statement.AccountId}
+type StatementService struct {
+	accountRepository persistence.AccountRepository
+}
 
-	if err := account.Get(); err != nil {
-		return entity.Account{}, helper.AccountNotFoundError
+func (ss StatementService) Save(statement entity.Statement) (entity.Account, error) {
+	account, err := ss.accountRepository.Get(statement.AccountId)
+
+	if err != nil {
+		return account, helper.AccountNotFoundError
 	}
 
 	statementValue := statement.Value
@@ -21,8 +25,8 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 		statementValue = -statementValue
 	}
 
-	if err := account.Update(statementValue); err != nil {
-		return entity.Account{}, helper.InsufficientBalanceError
+	if err := ss.accountRepository.Update(&account, statementValue); err != nil {
+		return account, helper.InsufficientBalanceError
 	}
 
 	statementDAO := persistence.StatementDAO(statement)
@@ -32,10 +36,10 @@ func CreateStatement(statement entity.Statement) (entity.Account, error) {
 	return entity.Account(account), nil
 }
 
-func GetStatements(accountId int) (helper.StatementsDTO, error) {
-	account := persistence.AccountDAO{Id: accountId}
+func (ss StatementService) Get(accountId int) (helper.StatementsDTO, error) {
+	account, err := ss.accountRepository.Get(accountId)
 
-	if err := account.Get(); err != nil {
+	if err != nil {
 		return helper.StatementsDTO{}, helper.AccountNotFoundError
 	}
 
@@ -51,4 +55,10 @@ func GetStatements(accountId int) (helper.StatementsDTO, error) {
 		},
 		Statements: statements,
 	}, nil
+}
+
+func NewStatementService() StatementService {
+	return StatementService{
+		accountRepository: persistence.NewAccountRepository(),
+	}
 }

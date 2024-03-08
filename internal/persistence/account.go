@@ -2,15 +2,16 @@ package persistence
 
 import "github.com/jazielloureiro/Rinha-Backend-2024-Q1-Go/internal/entity"
 
-type AccountDAO entity.Account
+type PostgresAccountRepository struct{}
 
-func (acc *AccountDAO) Get() (err error) {
+func (par PostgresAccountRepository) Get(id int) (acc entity.Account, err error) {
 	db, err := GetConnection()
 
 	if err != nil {
 		return
 	}
 
+	acc.Id = id
 	row := db.QueryRow(`SELECT "Limit", "Value" FROM "Account" WHERE "Id" = $1`, acc.Id)
 
 	err = row.Scan(&acc.Limit, &acc.Value)
@@ -18,7 +19,7 @@ func (acc *AccountDAO) Get() (err error) {
 	return
 }
 
-func (acc *AccountDAO) Update(statementValue int) (err error) {
+func (par PostgresAccountRepository) Update(acc *entity.Account, statementValue int) (err error) {
 	db, err := GetConnection()
 
 	if err != nil {
@@ -34,4 +35,8 @@ func (acc *AccountDAO) Update(statementValue int) (err error) {
 	err = row.Scan(&acc.Value)
 
 	return
+}
+
+func NewAccountRepository() PostgresAccountRepository {
+	return PostgresAccountRepository{}
 }

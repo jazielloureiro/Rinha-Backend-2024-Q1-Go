@@ -14,7 +14,8 @@ import (
 func GetStatements(rw http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(req.PathValue("id"))
 
-	statements, err := service.GetStatements(id)
+	statementService := service.NewStatementService()
+	statements, err := statementService.Get(id)
 
 	if err != nil {
 		helper.WriteErrorResponse(rw, http.StatusNotFound, err)
@@ -39,7 +40,8 @@ func CreateStatement(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	account, err := service.CreateStatement(statement)
+	statementService := service.NewStatementService()
+	account, err := statementService.Save(statement)
 
 	if err != nil {
 		var statusCode int
